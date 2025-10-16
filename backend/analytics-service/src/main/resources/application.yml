@@ -1,0 +1,13 @@
+server:
+  port: 9005
+
+spring:
+  application:
+    name: analytics-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/analytics_service_db
+    username: promptforge
+    password: dev_password_123
+  jpa:
+    hibernate:
+      ddl-auto: update

@@ -1,0 +1,17 @@
+server:
+  port: 9002
+
+spring:
+  application:
+    name: prompt-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/prompt_service_db
+    username: promptforge
+    password: dev_password_123
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+logging:
+  level:
+    com.promptforge.prompt: DEBUG

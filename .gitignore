@@ -1,0 +1,51 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.settings/
+.project
+.classpath
+
+# Build outputs
+target/
+build/
+dist/
+out/
+*.jar
+*.war
+*.ear
+*.class
+
+# Node modules
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment & Secrets
+.env
+.env.local
+.env.production
+*.log
+application-local.yml
+application-prod.yml
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+
+# Docker volumes (don't commit data)
+infrastructure/docker/*_data/
+
+# Temporary files
+*.swp
+*.swo
+*~
+.tmp/
+temp/

@@ -1,0 +1,75 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # User Service - ALL routes
+        - id: user-service
+          uri: http://localhost:9001
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - RewritePath=/api/users(?<segment>/?.*), ${segment}
+
+        # Prompt Service - ALL routes
+        - id: prompt-service
+          uri: http://localhost:9002
+          predicates:
+            - Path=/api/prompts/**
+          filters:
+            - RewritePath=/api/prompts(?<segment>/?.*), ${segment}
+
+        # Test Service
+        - id: test-service
+          uri: http://localhost:9003
+          predicates:
+            - Path=/api/tests/**
+          filters:
+            - RewritePath=/api/tests(?<segment>/?.*), ${segment}
+
+        # Marketplace Service
+        - id: marketplace-service
+          uri: http://localhost:9004
+          predicates:
+            - Path=/api/marketplace/**
+          filters:
+            - RewritePath=/api/marketplace(?<segment>/?.*), ${segment}
+
+        # Analytics Service
+        - id: analytics-service
+          uri: http://localhost:9005
+          predicates:
+            - Path=/api/analytics/**
+          filters:
+            - RewritePath=/api/analytics(?<segment>/?.*), ${segment}
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    reactor.netty: INFO

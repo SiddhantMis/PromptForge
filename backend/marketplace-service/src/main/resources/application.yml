@@ -1,0 +1,13 @@
+server:
+  port: 9004
+
+spring:
+  application:
+    name: marketplace-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/marketplace_service_db
+    username: promptforge
+    password: dev_password_123
+  jpa:
+    hibernate:
+      ddl-auto: update
