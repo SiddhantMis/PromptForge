@@ -7,45 +7,46 @@ spring:
   cloud:
     gateway:
       routes:
-        # User Service - ALL routes
+        # User Service Routes
         - id: user-service
           uri: http://localhost:9001
           predicates:
-            - Path=/api/users/**
+            - Path=/api/auth/**, /api/users/**
           filters:
-            - RewritePath=/api/users(?<segment>/?.*), ${segment}
+            - RewritePath=/api/auth/(?<segment>.*), /auth/${segment}
+            - RewritePath=/api/users/(?<segment>.*), /users/${segment}
 
-        # Prompt Service - ALL routes
+        # Prompt Service Routes
         - id: prompt-service
           uri: http://localhost:9002
           predicates:
             - Path=/api/prompts/**
           filters:
-            - RewritePath=/api/prompts(?<segment>/?.*), ${segment}
+            - RewritePath=/api/prompts/(?<segment>.*), /prompts/${segment}
 
-        # Test Service
+        # Test Service Routes
         - id: test-service
           uri: http://localhost:9003
           predicates:
             - Path=/api/tests/**
           filters:
-            - RewritePath=/api/tests(?<segment>/?.*), ${segment}
+            - RewritePath=/api/tests/(?<segment>.*), /tests/${segment}
 
-        # Marketplace Service
+        # Marketplace Service Routes
         - id: marketplace-service
           uri: http://localhost:9004
           predicates:
             - Path=/api/marketplace/**
           filters:
-            - RewritePath=/api/marketplace(?<segment>/?.*), ${segment}
+            - RewritePath=/api/marketplace/(?<segment>.*), /marketplace/${segment}
 
-        # Analytics Service
+        # Analytics Service Routes
         - id: analytics-service
           uri: http://localhost:9005
           predicates:
             - Path=/api/analytics/**
           filters:
-            - RewritePath=/api/analytics(?<segment>/?.*), ${segment}
+            - RewritePath=/api/analytics/(?<segment>.*), /analytics/${segment}
 
       globalcors:
         corsConfigurations:
@@ -71,5 +72,5 @@ management:
 
 logging:
   level:
-    org.springframework.cloud.gateway: INFO
+    org.springframework.cloud.gateway: DEBUG
     reactor.netty: INFO
