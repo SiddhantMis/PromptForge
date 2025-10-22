@@ -1,5 +1,7 @@
 package com.promptforge.user.service;
 
+import com.promptforge.user.event.UserEventProducer;
+
 import com.promptforge.user.dto.AuthResponse;
 import com.promptforge.user.dto.LoginRequest;
 import com.promptforge.user.dto.RegisterRequest;
@@ -28,6 +30,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final UserEventProducer userEventProducer;
     private final AuthenticationManager authenticationManager;
     
     @Transactional
@@ -60,6 +63,9 @@ public class AuthService {
         
         // Save user
         user = userRepository.save(user);
+        
+        // Publish user registered event
+        userEventProducer.publishUserRegistered(user.getId(), user.getUsername(), user.getEmail());
         
         log.info("User registered successfully with ID: {}", user.getId());
         

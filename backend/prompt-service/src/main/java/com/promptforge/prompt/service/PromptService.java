@@ -1,5 +1,7 @@
 package com.promptforge.prompt.service;
 
+import com.promptforge.prompt.event.PromptEventProducer;
+
 import com.promptforge.prompt.document.PromptVersion;
 import com.promptforge.prompt.dto.CreatePromptRequest;
 import com.promptforge.prompt.dto.PromptResponse;
@@ -27,6 +29,7 @@ public class PromptService {
     
     private final PromptRepository promptRepository;
     private final PromptVersionRepository promptVersionRepository;
+    private final PromptEventProducer promptEventProducer;
     
     @Transactional
     public PromptResponse createPrompt(CreatePromptRequest request, String userId, String username) {
@@ -47,6 +50,16 @@ public class PromptService {
                 .build();
         
         prompt = promptRepository.save(prompt);
+        
+        // Publish prompt created event
+        promptEventProducer.publishPromptCreated(
+            prompt.getId(),
+            prompt.getTitle(),
+            prompt.getUserId(),
+            prompt.getUsername(),
+            prompt.getCategory(),
+            prompt.getIsPublic()
+        );
         
         // Save first version to MongoDB
         saveVersion(prompt, "Initial version");
@@ -70,6 +83,9 @@ public class PromptService {
         
         // Increment view count
         prompt.incrementViewCount();
+        
+        // Publish prompt viewed event
+        promptEventProducer.publishPromptViewed(promptId, userId);
         promptRepository.save(prompt);
         
         return mapToResponse(prompt);
