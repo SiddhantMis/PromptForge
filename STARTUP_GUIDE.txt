@@ -1,0 +1,46 @@
+﻿# PromptForge Complete Startup Script
+
+## STEP 1: Start Infrastructure (Terminal 1)
+cd C:\Users\mishrasi\PromptForge\infrastructure\docker
+docker-compose up -d
+Start-Sleep -Seconds 15
+Write-Host " Infrastructure running (PostgreSQL, MongoDB, Kafka, Zookeeper)" -ForegroundColor Green
+
+## STEP 2: Start Services (Separate Terminals)
+
+### Terminal 2 - API Gateway (Port 9001)
+cd C:\Users\mishrasi\PromptForge\backend\api-gateway
+mvn spring-boot:run
+
+### Terminal 3 - User Service (Port 9001)
+cd C:\Users\mishrasi\PromptForge\backend\user-service
+mvn spring-boot:run
+
+### Terminal 4 - Prompt Service (Port 9002)
+cd C:\Users\mishrasi\PromptForge\backend\prompt-service
+mvn spring-boot:run
+
+### Terminal 5 - Test Service (Port 9003)
+cd C:\Users\mishrasi\PromptForge\backend\test-service
+mvn spring-boot:run
+
+### Terminal 6 - Marketplace Service (Port 9004)
+cd C:\Users\mishrasi\PromptForge\backend\marketplace-service
+mvn spring-boot:run
+
+### Terminal 7 - Analytics Service (Port 9005)
+cd C:\Users\mishrasi\PromptForge\backend\analytics-service
+mvn spring-boot:run
+
+## STEP 3: Wait for Startup
+# Each service takes 30-60 seconds
+# Look for: 'Started [ServiceName]Application'
+
+## STEP 4: Access Points
+# API Gateway: http://localhost:9001
+# User Swagger: http://localhost:9001/swagger-ui.html
+# Prompt Swagger: http://localhost:9002/swagger-ui.html
+# Test Swagger: http://localhost:9003/swagger-ui.html
+# Marketplace Swagger: http://localhost:9004/swagger-ui.html
+# Analytics Stats: http://localhost:9005/analytics/stats
+
