@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    active: docker
+    
+logging:
+  level:
+    root: INFO
+    com.promptforge: DEBUG

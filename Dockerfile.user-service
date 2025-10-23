@@ -1,0 +1,26 @@
+# Multi-stage build for PromptForge User Service
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /build
+
+# Copy parent POM and all modules
+COPY backend/pom.xml ./backend/
+COPY backend/shared-lib ./backend/shared-lib
+COPY backend/user-service ./backend/user-service
+
+# Build shared-lib first (dependency)
+WORKDIR /build/backend/shared-lib
+RUN mvn clean install -DskipTests
+
+# Build user-service (depends on shared-lib)
+WORKDIR /build/backend/user-service
+RUN mvn clean package -DskipTests
+
+# Runtime stage
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+
+COPY --from=build /build/backend/user-service/target/*.jar app.jar
+
+EXPOSE 9001
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
