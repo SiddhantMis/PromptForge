@@ -39,31 +39,6 @@ PromptForge is an **enterprise-grade microservices platform** that enables users
 
 ### System Design
 
-\\\
-                        
-                            API Gateway (9001)   
-                          Spring Cloud Gateway   
-                        
-                                     
-        
-                                                            
-           
-     User      Prompt       Test       Market    Analytics 
-   Service    Service     Service     Service     Service  
-     9001       9002        9003        9004        9005   
-           
-                                                            
-       
-                                     
-                     
-                                                    
-                          
-               PostgreSQL                      Kafka      
-               (5 DBs)                      Event Stream  
-               + MongoDB                     + Zookeeper  
-                          
-\\\
-
 ###  Microservices Overview
 
 | Service | Port | Responsibility | Tech Highlights |
