@@ -90,39 +90,49 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
         log.info("User login attempt with email: {}", request.getEmail());
         
-        // Authenticate user
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-        
-        // Get user from database
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        // Update last login
-        user.setLastLoginAt(LocalDateTime.now());
-        userRepository.save(user);
-        
-        log.info("User logged in successfully with ID: {}", user.getId());
-        
-        // Generate tokens
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", user.getRoles());
-        
-        String accessToken = jwtUtil.generateAccessToken(user.getEmail(), user.getId(), claims);
-        String refreshToken = jwtUtil.generateRefreshToken(user.getEmail(), user.getId());
-        
-        // Build response
-        return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .tokenType("Bearer")
-                .expiresIn(jwtUtil.getAccessTokenExpiration() / 1000)
-                .user(mapToUserResponse(user))
-                .build();
+        try {
+            // Authenticate user
+            log.debug("Starting authentication for: {}", request.getEmail());
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+            log.debug("Authentication successful for: {}", request.getEmail());
+            
+            // Get user from database
+            User user = userRepository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            // Update last login
+            user.setLastLoginAt(LocalDateTime.now());
+            userRepository.save(user);
+            
+            log.info("User logged in successfully with ID: {}", user.getId());
+            
+            // Generate tokens
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("roles", user.getRoles());
+            
+            String accessToken = jwtUtil.generateAccessToken(user.getEmail(), user.getId(), claims);
+            String refreshToken = jwtUtil.generateRefreshToken(user.getEmail(), user.getId());
+            
+            // Build response
+            return AuthResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .tokenType("Bearer")
+                    .expiresIn(jwtUtil.getAccessTokenExpiration() / 1000)
+                    .user(mapToUserResponse(user))
+                    .build();
+        } catch (org.springframework.security.authentication.BadCredentialsException ex) {
+            log.error("Bad credentials for email: {}", request.getEmail());
+            throw ex; // Re-throw to be handled by GlobalExceptionHandler
+        } catch (Exception ex) {
+            log.error("Login failed for email: {}", request.getEmail(), ex);
+            throw new RuntimeException("Login failed: " + ex.getMessage());
+        }
     }
     
     private UserResponse mapToUserResponse(User user) {
